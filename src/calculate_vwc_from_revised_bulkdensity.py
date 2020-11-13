@@ -85,15 +85,23 @@ def transformBDPerHorizonToFoot(
         sample_df = bdPerFt.loc[(bdPerFt["Year"] == row["Year"]) & (bdPerFt["ID2"] == row["ID2"])]
         for topDepth in TOP_DEPTHS:
             print(row["Year"], row["ID2"], topDepth)
-            print("Sample_df")
-            print(sample_df)
             
             sample_depth_df = sample_df.loc[(((sample_df["TopDepthFt"] >= topDepth) | (sample_df["BottomDepthFt"] >= topDepth)) & ((sample_df["TopDepthFt"] <= (topDepth + INCREMENT)) | (sample_df["BottomDepthFt"] <= (topDepth + INCREMENT))))]
             print("sample_depth_df")
             print(sample_depth_df)
+            sample_depth_df = sample_depth_df.apply(lambda x : calculateWeightedBulkDensity(x, topDepth, INCREMENT), axis = 1)
+            print(sample_depth_df)
 
     return bdPerFt
 
+def calculateWeightedBulkDensity(row, topDepth, increment):
+    row["TopDepthWeighted"] = topDepth if (row["TopDepthFt"] < topDepth) else row["TopDepthFt"]
+    row["BottomDepthWeighted"] = (topDepth + increment) if (row["BottomDepthFt"] > (topDepth + increment)) else row["BottomDepthFt"]
+
+    row["Weight"] = (row["BottomDepthWeighted"] - row["TopDepthWeighted"]) / increment
+    row["BulkDensityWeighted"] = row["Weight"] * row["BulkDensity"]
+    
+    return row
 
 def main(
     pathRevisedBulkDensity: pathlib.Path,
