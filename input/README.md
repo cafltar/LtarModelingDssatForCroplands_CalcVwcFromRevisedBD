@@ -15,6 +15,7 @@
   * Has revised bulk density values that should be used with gravimetric data found in [WaterData_dirty]
 
 ## 11/12/2020
+
 * [All_VWC_Cor_F1_99_06.xls](All_VWC_Cor_F1_99_06.xls)
   * From Bryan Carlson's Google Drive: [My Drive/Archive/NasRm243_20160615_oldDataBackup/DataDriveBackup/Projects/Individual_Users/Hesham/Cook_Farm/Excel/VWC/VWC_feet]
   * Has aggregated volumetric water content calculated using, I'm assuming, representative bulk density for the soil type. These can be used to validate ball-park values compared to values calculated using revised bulk density

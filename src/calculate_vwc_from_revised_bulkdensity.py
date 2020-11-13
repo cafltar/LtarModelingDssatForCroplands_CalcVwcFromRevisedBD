@@ -41,12 +41,68 @@ def getGravimetricWaterContent(
 
     df["Year"] = df["Year"].apply(lambda x: convertTwoDigitYearToFourDigit(x))
 
+    return df
+
+def getRevisedBulkDensity(
+    bdPath: pathlib.Path
+):
+    df = pd.read_csv(
+        bdPath,
+        usecols=[0,1,2,3,4,5,7]
+    )
+
+    return df
+
+def transformBDPerHorizonToFoot(
+    bdPerHorizon: pd.DataFrame
+):
+    CM_TO_FT = 0.0328084
+    INCREMENT = 1
+    TOP_DEPTHS = list(range(0,5,INCREMENT))
+    
+    # Copy bd df, convert depth increments from cm to ft
+    # Get dataframe with just year and ID2
+    # For each row in year+id2 df
+    #   For each depth increment (int i = 0, i+1, i<=4)
+    #       get rows from bd_df where id2 match, year match, topdepth or bottomdepth >= i (depth increment)
+    #       for each row
+    #           topDepth = row.topDepth < i ? i : topDepth
+    #           bottomDepth = row.bottomDepth > i+1 ? i+1 : bottomDepth
+    #           weight = (bottomDepth - topDepth) / 1
+    #           weightedBD = weight * row.BulkDensity
+    #       check sum of weight == 1
+    #       bd_df.TopDepthFt = i
+    #       bd_df.BottomDepthFt = i + 1
+
+    bdPerFt = bdPerHorizon.copy()
+    bdPerFt = bdPerFt.assign(TopDepthFt = lambda x: x["TopDepth"] * CM_TO_FT)
+    bdPerFt = bdPerFt.assign(BottomDepthFt = lambda x: x["BottomDepth"] * CM_TO_FT)
+
+    # Get samples for loop
+    samples = bdPerHorizon[["Year", "ID2"]].drop_duplicates()
+
+    for index, row in samples.iterrows():
+        sample_df = bdPerFt.loc[(bdPerFt["Year"] == row["Year"]) & (bdPerFt["ID2"] == row["ID2"])]
+        for topDepth in TOP_DEPTHS:
+            print(row["Year"], row["ID2"], topDepth)
+            print("Sample_df")
+            print(sample_df)
+            
+            sample_depth_df = sample_df.loc[(((sample_df["TopDepthFt"] >= topDepth) | (sample_df["BottomDepthFt"] >= topDepth)) & ((sample_df["TopDepthFt"] <= (topDepth + INCREMENT)) | (sample_df["BottomDepthFt"] <= (topDepth + INCREMENT))))]
+            print("sample_depth_df")
+            print(sample_depth_df)
+
+    return bdPerFt
+
+
 def main(
     pathRevisedBulkDensity: pathlib.Path,
     pathGwcDir: pathlib.Path
 ):    
     ### Data Preparation
-    getGravimetricWaterContent(pathGwcDir)
+    #getGravimetricWaterContent(pathGwcDir)
+    bulkDensity = getRevisedBulkDensity(pathRevisedBulkDensity)
+    bdPerFoot = transformBDPerHorizonToFoot(bulkDensity)
 
     
 if __name__ == "__main__":
