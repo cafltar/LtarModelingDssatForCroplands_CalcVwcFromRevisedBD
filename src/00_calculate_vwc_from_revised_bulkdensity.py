@@ -159,6 +159,7 @@ def main(
     pathRevisedBulkDensity: pathlib.Path,
     pathGwcDir: pathlib.Path,
     workingDir: pathlib.Path,
+    outputDir: pathlib.Path,
     useCache: bool
 ):    
     ### Data Preparation
@@ -216,21 +217,24 @@ def main(
     df = df.dropna(axis=0, subset=["VolumetricWaterContent"])
 
     # Write final dataset
+    outputDir.mkdir(parents=True, exist_ok=True)
     date_today = datetime.datetime.now().strftime("%Y%m%d")
     df.to_csv(
-        workingDir / "VolumetricWaterContentFromRevisedBd_{}.csv".format(date_today), 
+        outputDir / "VolumetricWaterContentFromRevisedBd_{}.csv".format(date_today), 
         index = False)
     
 if __name__ == "__main__":
     # parameters
-    inputDir = pathlib.Path.cwd() / "input"
+    inputDir = pathlib.Path.cwd() / "data" / "input"
+    workingDir = pathlib.Path.cwd() / "data" / "working"
+    outputDir = pathlib.Path.cwd() / "data" / "output"
     inputRevisedBulkDensity = inputDir / "soilCore1998To2015ShallowDeepMergedByHorizon_20180926.csv"
     inputGwcDir = inputDir / "VwcSpringFallCalc"
-    workingDir = pathlib.Path.cwd() / "working"
-    
+
     main(
         inputRevisedBulkDensity,
         inputGwcDir,
         workingDir,
+        outputDir,
         True
     )
