@@ -1,6 +1,7 @@
 import glob
 import pathlib
 import pandas as pd
+import datetime
 
 def convertTwoDigitYearToFourDigit(shortYear):
     if(shortYear > 10):
@@ -125,7 +126,7 @@ def calculateWeightedBulkDensity(row, topDepth, increment):
     return row
 
 def cleanBDPerFootIntermediate(bdPerFoot):
-    df = bdPerFoot[["Year", "ID2", "Latitude", "Longitude", "DepthIncrementTop", "DepthIncrementBottom", "BulkDensityPerIncrement"]]
+    df = bdPerFoot[["Year", "ID2", "Latitude", "Longitude", "DepthIncrementTop", "DepthIncrementBottom", "BulkDensityPerIncrement", "Notes"]]
     df = df.rename(columns={"DepthIncrementTop": "TopDepth", "DepthIncrementBottom": "BottomDepth", "BulkDensityPerIncrement": "BulkDensity"})
     df = df.drop_duplicates()
 
@@ -161,37 +162,64 @@ def main(
     useCache: bool
 ):    
     ### Data Preparation
-    pathBulkDensityIntermediate = workingDir / "bulkDensityPerFootClean.csv"
-    pathGravimetricWCIntermediate = workingDir / "gravimetricWCAggregate.csv"
-    pathGravimetricWCTidy = workingDir / "gravimetricWCTidy.csv"
+    pathGravimetricWCIntermediate = workingDir / "01_gravimetricWCAggregate.csv"
+    pathGravimetricWCTidy = workingDir / "02_gravimetricWCTidy.csv"
+    pathBulkDensityIntermediate = workingDir / "03_bulkDensityPerFootIntermediate.csv"
+    pathBulkDensityTidy = workingDir / "04_bulkDensityPerFootTidy.csv"
 
-    if(not useCache):
+    # Create working dir if not exist
+    workingDir.mkdir(parents=True, exist_ok=True)
+
+    # Aggregate files with gravimetric water content
+    if((not useCache) | (not pathGravimetricWCIntermediate.is_file())):
         gwcAggregate = getGravimetricWaterContent(pathGwcDir)
         gwcAggregate.to_csv(pathGravimetricWCIntermediate, index=False)
+    else:
+        gwcAggregate = pd.read_csv(pathGravimetricWCIntermediate)
+
+    # Convert aggregated vwc data to tidy format
+    if((not useCache) | (not pathGravimetricWCTidy.is_file())):
         gwcTidy = tidyGwcAggregate(gwcAggregate)
         gwcTidy.to_csv(pathGravimetricWCTidy, index=False)
     else:
-        if(pathGravimetricWCIntermediate.is_file()):
-            gwcTidy = pd.read_csv(pathGravimetricWCTidy)
-        else:
-            raise Exception("Error finding cached file, run script with 'useCache' set to False")
+        gwcTidy = pd.read_csv(pathGravimetricWCTidy)
 
-    if(not useCache):
+    # Read revised bulk density data and calculate values for 1 ft intervals
+    if((not useCache) | (not pathBulkDensityIntermediate.is_file())):
         bulkDensity = getRevisedBulkDensity(pathRevisedBulkDensity)
         bdPerFootIntermediate = transformBDPerHorizonToFoot(bulkDensity)
-        bdPerFootIntermediate.to_csv(workingDir / "bulkDensityPerFootIntermediate.csv")
-        
-        bdPerFoot = cleanBDPerFootIntermediate(bdPerFootIntermediate)
-        bdPerFoot.to_csv(pathBulkDensityIntermediate, index=False)
+        bdPerFootIntermediate.to_csv(pathBulkDensityIntermediate)
     else:
-        if(pathBulkDensityIntermediate.is_file()):
-            bdPerFoot = pd.read_csv(pathBulkDensityIntermediate)
-        else:
-            raise Exception("Error finding cached file, run script with 'useCache' set to False")
+        bdPerFootIntermediate = pd.read_csv(pathBulkDensityIntermediate)
+
+    if((not useCache) | (not pathBulkDensityTidy.is_file())):
+        bdPerFoot = cleanBDPerFootIntermediate(bdPerFootIntermediate)
+        bdPerFoot.to_csv(pathBulkDensityTidy, index=False)
+    else:
+        bdPerFoot = pd.read_csv(pathBulkDensityTidy)
     
     df = calculateVwcFromGwc(gwcTidy, bdPerFoot)
+    df = df.rename(columns={"Year_x": "Year"})
+    df = df[[
+        "Year", 
+        "Season", 
+        "ID2", 
+        "Latitude", 
+        "Longitude", 
+        "TopDepth", 
+        "BottomDepth", 
+        "BulkDensity", 
+        "GravimetricWaterContent", 
+        "VolumetricWaterContent",
+        "Notes"]]
+    df = df.sort_values(by=["Year", "Season", "ID2"])
+    df = df.dropna(axis=0, subset=["VolumetricWaterContent"])
 
-    df.to_csv(workingDir / "volumetricWaterContentFromRevisedBd.csv", index = False)
+    # Write final dataset
+    date_today = datetime.datetime.now().strftime("%Y%m%d")
+    df.to_csv(
+        workingDir / "VolumetricWaterContentFromRevisedBd_{}.csv".format(date_today), 
+        index = False)
     
 if __name__ == "__main__":
     # parameters
