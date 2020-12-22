@@ -12,8 +12,9 @@ See: [https://doi.org/10.1016/j.jhydrol.2011.04.029]
 
 Script and output files have a prefix (e.g. "p00_") to represent their sequential step in data processing. The letter "p" represents "processing" followed by a major number and a minor number.
 
+* [src/common.py](src/common.py)
+  * Contains common functions used by processing scripts and notebooks
 * [src/p00_calculate_vwc_from_revised_bulkdensity.py](src/p00_calculate_vwc_from_revised_bulkdensity.py)
-  * This is the first of the scripts to be run and, as a means to reduce refactoring, also contains common functions
   * The script aggregates modeled and measured gravimetric water content data from Hesham's work, aggregates and cleans bulk density data from 1998, and calculates volumetric water content
 * [notebooks/p10_review_vwc.ipynb](notebooks/p10_review_vwc.ipynb)
   * Visualizations for assessing [src/p00_calculate_vwc_from_revised_bulkdensity.py](src/p00_calculate_vwc_from_revised_bulkdensity.py)
