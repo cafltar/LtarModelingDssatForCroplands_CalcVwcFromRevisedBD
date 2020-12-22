@@ -103,7 +103,7 @@ def getGwcNMeasured(
     df = pd.DataFrame()
 
     seasons = ["Spring", "Fall"]
-    bottomDepths = [1,2,3,4]
+    bottomDepths = [1,2,3,4,5]
 
     for season in seasons:
         for bottomDepth in bottomDepths:
