@@ -33,7 +33,7 @@
   * Looks like ID2 values are missing (sl_unique_id doesn't seem to match ID2)
   * Data should be compared to data in [VwcSpringFallCalc] using GWC values
   
- ## 11/18/2020
+## 11/18/2020
  
  * [CAF_outline.docx](CAF_outline.docx)
    * From Bryan Carlson's Google Drive: [My Drive/Archive/NasRm243_20160615_oldDataBackup/DataDriveBackup/Projects/Individual_Users/Hesham/Cook_Farm]
@@ -42,3 +42,9 @@
    * From Bryan Carlson's Google Drive: [My Drive/Archive/NasRm243_20160615_oldDataBackup/DataDriveBackup/Projects/Individual_Users/Hesham/Cook_Farm/SAS_inf]
    * Files with, what seem to be, measured values of GWC, ammonia, and nitrate with ID2 values
    * File name in form: Soil3{F/S for spring/fall}{Depth in foot}_{two digit year}.xls
+
+## 12/21/2020
+
+* [soilCore1998To2015ShallowDeepMergedByHorizon_20201221.csv](soilCore1998To2015ShallowDeepMergedByHorizon_20201221.csv)
+  * From: CookEastSoilGridPointSurvey\R\MergeDepthsAndYears\output
+  * Updated from previous version after fixing copy/paste error with a bulk density value (ID2=189, HY1998 and 2008) and removing 0 values that should be NA (pH, C, N related values)
