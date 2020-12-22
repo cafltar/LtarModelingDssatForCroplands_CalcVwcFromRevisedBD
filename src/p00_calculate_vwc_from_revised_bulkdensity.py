@@ -237,7 +237,7 @@ if __name__ == "__main__":
     inputDir = pathlib.Path.cwd() / "data" / "input"
     workingDir = pathlib.Path.cwd() / "data" / "working"
     outputDir = pathlib.Path.cwd() / "data" / "output"
-    inputRevisedBulkDensity = inputDir / "soilCore1998To2015ShallowDeepMergedByHorizon_20180926.csv"
+    inputRevisedBulkDensity = inputDir / "soilCore1998To2015ShallowDeepMergedByHorizon_20201221.csv"
     inputGwcDir = inputDir / "VwcSpringFallCalc"
 
     main(
