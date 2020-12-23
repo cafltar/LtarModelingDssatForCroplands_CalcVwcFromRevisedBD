@@ -14,15 +14,15 @@ Script and output files have a prefix (e.g. "p00_") to represent their sequentia
 
 * [src/common.py](src/common.py)
   * Contains common functions used by processing scripts and notebooks
-* [src/p00_calculate_vwc_from_revised_bulkdensity.py](src/p00_calculate_vwc_from_revised_bulkdensity.py)
+* [src/p00_calculate_vwc_from_revised_bulkdensity_P3.py](src/p00_calculate_vwc_from_revised_bulkdensity_P3.py)
   * The script aggregates modeled and measured gravimetric water content data from Hesham's work, aggregates and cleans bulk density data from 1998, and calculates volumetric water content
 * [notebooks/p10_review_vwc.ipynb](notebooks/p10_review_vwc.ipynb)
-  * Visualizations for assessing [src/p00_calculate_vwc_from_revised_bulkdensity.py](src/p00_calculate_vwc_from_revised_bulkdensity.py)
-* [src/p20_calculate_vwc_from_revised_bulkdensity_P02.py](src/p20_calculate_vwc_from_revised_bulkdensity_P02.py)
-  * This is the third script to be run; it references many functions defined in [src/p00_calculate_vwc_from_revised_bulkdensity.py](src/p00_calculate_vwc_from_revised_bulkdensity.py)
-  * The difference between this script and [src/p00_calculate_vwc_from_revised_bulkdensity.py](src/p00_calculate_vwc_from_revised_bulkdensity.py) is that this script only handles measured GWC data, not both measured and modeled
+  * Visualizations for assessing [src/p00_calculate_vwc_from_revised_bulkdensity_P3.py](src/p00_calculate_vwc_from_revised_bulkdensity_P3.py)
+* [src/p20_calculate_vwc_from_revised_bulkdensity_P2.py](src/p20_calculate_vwc_from_revised_bulkdensity_P2.py)
+  * This is the third script to be run; it references many functions common with [src/p00_calculate_vwc_from_revised_bulkdensity_P3.py](src/p00_calculate_vwc_from_revised_bulkdensity_P3.py)
+  * The difference between this script and [src/p00_calculate_vwc_from_revised_bulkdensity_P3.py](src/p00_calculate_vwc_from_revised_bulkdensity_P3.py) is that this script only handles measured GWC data, not both measured and modeled
 * [notebooks/p30_review_vwc_from_measured.ipynb](notebooks/p30_review_vwc_from_measured.ipynb)
-  * Visualizations for assessing [src/p20_calculate_vwc_from_revised_bulkdensity_P02.py](src/p20_calculate_vwc_from_revised_bulkdensity_P02.py)
+  * Visualizations for assessing [src/p20_calculate_vwc_from_revised_bulkdensity_P2.py](src/p20_calculate_vwc_from_revised_bulkdensity_P2.py)
 
 ## Processing steps
 
