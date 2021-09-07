@@ -48,3 +48,9 @@
 * [soilCore1998To2015ShallowDeepMergedByHorizon_20201221.csv](soilCore1998To2015ShallowDeepMergedByHorizon_20201221.csv)
   * From: CookEastSoilGridPointSurvey\R\MergeDepthsAndYears\output
   * Updated from previous version after fixing copy/paste error with a bulk density value (ID2=189, HY1998 and 2008) and removing 0 values that should be NA (pH, C, N related values)
+
+## 09/07/2021
+
+* [CookEastSoilGwcDates_20210903.xlsx](CookEastSoilGwcDates_20210903.xlsx)
+  * From: LtarModelingDssatForCroplands\Working\DetermineSamplingDatesForGwc
+  * Has concrete dates for soil sampling for original GWC analysis. These dates will add context to the data in addition to the current "season" designation (Spring/Fall)

@@ -8,6 +8,7 @@ from common import *
 def main(
     pathRevisedBulkDensity: pathlib.Path,
     pathGwcDir: pathlib.Path,
+    inputGwcSamplingDates: pathlib.Path,
     workingDir: pathlib.Path,
     outputDir: pathlib.Path,
     useCache: bool
@@ -17,6 +18,7 @@ def main(
     pathGravimetricWCTidy = workingDir / "02_gravimetricWCTidy.csv"
     pathBulkDensityIntermediate = workingDir / "03_bulkDensityPerFootIntermediate.csv"
     pathBulkDensityTidy = workingDir / "04_bulkDensityPerFootTidy.csv"
+    pathGwcSamplingDates = workingDir / "05_gwcTidyDates.csv"
 
     # Create working dir if not exist
     workingDir.mkdir(parents=True, exist_ok=True)
@@ -53,12 +55,20 @@ def main(
         bdPerFoot.to_csv(pathBulkDensityTidy, index=False)
     else:
         bdPerFoot = pd.read_csv(pathBulkDensityTidy)
+
+    # Append dates of soil sampling to GWC dataset
+    if((not useCache) | (not pathGwcSamplingDates.is_file())):
+        gwcTidyDates = appendSamplingDatesToGwc(inputGwcSamplingDates, gwcTidy)
+        gwcTidyDates.to_csv(pathGwcSamplingDates, index=False)
+    else:
+        gwcTidyDates = pd.read_csv(pathGwcSamplingDates)
     
-    df = calculateVwcFromGwc(gwcTidy, bdPerFoot)
+    df = calculateVwcFromGwc(gwcTidyDates, bdPerFoot)
     df = df.rename(columns={"Year_x": "Year"})
     df = df[[
         "Year", 
         "Season", 
+        "Date",
         "ID2", 
         "Latitude", 
         "Longitude", 
@@ -85,11 +95,13 @@ if __name__ == "__main__":
     outputDir = pathlib.Path.cwd() / "data" / "output"
     inputRevisedBulkDensity = inputDir / "soilCore1998To2015ShallowDeepMergedByHorizon_20201221.csv"
     inputGwcDir = inputDir / "VwcSpringFallCalc"
+    inputGwcSamplingDates = inputDir / "CookEastSoilGwcDates_20210903.xlsx"
 
     main(
         inputRevisedBulkDensity,
         inputGwcDir,
+        inputGwcSamplingDates,
         workingDir,
         outputDir,
-        False
+        True
     )

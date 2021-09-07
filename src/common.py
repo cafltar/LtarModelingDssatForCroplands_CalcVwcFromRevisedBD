@@ -1,6 +1,7 @@
 import glob
 import pathlib
 import pandas as pd
+import datetime
 
 # Converts a one or two digit year (e.g. 0 for 2000) found between 1999-2006 to four digit year
 def convertTwoDigitYearToFourDigit(shortYear):
@@ -207,3 +208,27 @@ def calculateVwcFromGwc(gwcTidy, bdPerFoot):
     df["VolumetricWaterContent"] = df.apply(lambda x: x["GravimetricWaterContent"] * x["BulkDensity"], axis = 1)
 
     return df
+
+# Adds sampling date to GWC dataset, merges based on Year and Season
+def appendSamplingDatesToGwc(
+    pathGwcSamplingDates: pathlib.Path,
+    gwcTidy: pd.DataFrame
+):
+    gwc = gwcTidy.copy()
+
+    columnTypes = {
+        "Year": int,
+        "Season": str,
+        "Date": datetime.date
+    }
+    samplingDates = pd.read_excel(
+        pathGwcSamplingDates,
+        sheet_name="Sheet1",
+        usecols = "A:C",
+        names = ["Year", "Season", "Date"],
+        dtype=columnTypes
+    )
+
+    gwcSamplingDates = pd.merge(gwc, samplingDates, on=["Year", "Season"])
+
+    return gwcSamplingDates
